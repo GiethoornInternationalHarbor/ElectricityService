@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ElectricityService.App": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "AMQP": "amqp://guest:guest@localhost:5672"
+      }
+    }
+  }
+}
