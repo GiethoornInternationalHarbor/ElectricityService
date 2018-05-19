@@ -3,11 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElectricityService.App", "ElectricityService.App\ElectricityService.App.csproj", "{5C3C5E59-81F2-4742-8FA1-11212B17759E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectricityService.App", "ElectricityService.App\ElectricityService.App.csproj", "{5C3C5E59-81F2-4742-8FA1-11212B17759E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElectricityService.Core", "ElectricityService.Core\ElectricityService.Core.csproj", "{01C8C542-AA82-4EEF-ADB9-992E561983EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectricityService.Core", "ElectricityService.Core\ElectricityService.Core.csproj", "{01C8C542-AA82-4EEF-ADB9-992E561983EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElectricityService.Infrastructure", "ElectricityService.Infrastructure\ElectricityService.Infrastructure.csproj", "{DB7252D6-ABD1-472A-8E2B-72A1CBA251E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectricityService.Infrastructure", "ElectricityService.Infrastructure\ElectricityService.Infrastructure.csproj", "{DB7252D6-ABD1-472A-8E2B-72A1CBA251E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6AEACF0C-DBFF-4BBF-82F7-31F145E27C2C}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
