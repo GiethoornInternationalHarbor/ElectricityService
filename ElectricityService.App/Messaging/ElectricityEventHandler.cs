@@ -1,38 +1,32 @@
 ﻿using ElectricityService.Core.Messaging;
 using ElectricityService.Core.Models;
 using ElectricityService.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Utf8Json;
 
 namespace ElectricityService.App.Messaging
 {
     public class ElectricityEventHandler : IEventHandlerCallback
-	{
-		private readonly IElectricityService _electricityService;
+    {
+        private readonly IElectricityService _electricityService;
+
         public ElectricityEventHandler(IElectricityService electricityService)
         {
             _electricityService = electricityService;
         }
 
-        #region --- main stuff---
         public async Task<bool> HandleEventAsync(EventTypes eventType, string message)
         {
             switch (eventType)
             {
                 case EventTypes.ShipDocked:
                     {
-                        //do not fall in this function as it will cause an exception since we do not use it
-                        // return await HandleShipDocked(message);
-                        return true;
+                        return await HandleShipDocked(message);
                     }
                 case EventTypes.ShipUndocked:
                     {
-                        //do not fall in this function as it will cause an exception since we do not use it
-                        // return await HandleShipUndocked(message);
-                        return true;
+
+                        return await HandleShipUndocked(message);
                     }
                 case EventTypes.ServiceRequested:
                     {
@@ -40,43 +34,56 @@ namespace ElectricityService.App.Messaging
                     }
                 case EventTypes.Unknown:
                     {
-                        //Do nothing since we dont know what to do with this, but do catch this otherwhise it will error out.
                         return true;
                     }
             }
 
             return true;
         }
-        #endregion
 
-        #region --- required according to specifications --
-        //however we dont use them
-        private Task<bool> HandleShipUndocked(string message)
+        private async Task<bool> HandleShipUndocked(string message)
         {
-            throw new NotImplementedException();
+
+            Ship receivedShip = JsonSerializer.Deserialize<Ship>(message);
+            Ship existingShip = await _electricityService.GetShipAsync(receivedShip.Id);
+
+            await _electricityService.DeleteShipAsync(existingShip.Id);
+            return true;
         }
 
-        private Task<bool> HandleShipDocked(string message)
+        private async Task<bool> HandleShipDocked(string message)
         {
-            throw new NotImplementedException();
+            //1. Deserialize ship
+            Ship receivedShip = JsonSerializer.Deserialize<Ship>(message);
+            //2. Dump ship in db
+            Ship createdShip = await _electricityService.CreateShipAsync(receivedShip);
+            return true;
         }
-        #endregion
 
-
-
-        #region ---Outgoing events---
         private async Task<bool> HandleServiceRequested(string message)
         {
-            
-            Ship receivedShip = JsonSerializer.Deserialize<Ship>(message);
-            //lets say we executed the battery recharging instantly like a god we have no further stuff here IF it is the right services
-            if (receivedShip.ShipService.Name == "Electricity")
+
+            //musing servicerequest model now
+            var receivedShipService = JsonSerializer.Deserialize<ServiceRequest>(message);
+
+            //check if the service that is requested actually is electricityling.
+            if (receivedShipService.ServiceId == ShipServiceConstants.ElectricityId)
             {
-                await _electricityService.SendServiceCompletedAsync(receivedShip);
+                Ship existingShip = await _electricityService.GetShipAsync(receivedShipService.ShipId);
+
+                //check if ship is in our DB and thus is docked
+                if (existingShip != null)
+                {
+
+                    await _electricityService.Electricity(existingShip);
+
+                    //call the overload method
+                    Task.Run(() => _electricityService.SendServiceCompletedAsync(receivedShipService));
+
+                }
             }
             return true;
-        }  
-        #endregion
+        }
 
     }
 }

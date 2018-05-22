@@ -1,20 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace ElectricityService.Core.Models
 {
-    /* requested by Kevin */
     public class ShipService
     {
+        /// <summary>
+        /// Gets or sets the identifier.
+        /// </summary>
+        [Required]
         [Key]
         public Guid Id { get; set; }
 
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
         [Required]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Gets or sets the price.
+        /// </summary>
+        [Required]
         public double Price { get; set; }
     }
 }

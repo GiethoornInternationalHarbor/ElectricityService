@@ -15,63 +15,65 @@ namespace ElectricityService.App
     {
         public static IServiceProvider ServiceProvider { get; private set; }
 
-    static Program()
-    {
-        string filePath = ".env";
+        static Program()
+        {
+            string filePath = ".env";
 
 #if DEBUG
-        filePath = Path.Combine(AppContext.BaseDirectory.Substring(0, AppContext.BaseDirectory.LastIndexOf("bin")), filePath);
+            filePath = Path.Combine(AppContext.BaseDirectory.Substring(0, AppContext.BaseDirectory.LastIndexOf("bin")), filePath);
 #endif
 
-        DotEnv.Config(throwOnError: false, filePath: filePath);
+            DotEnv.Config(throwOnError: false, filePath: filePath);
 
-        //setup our DI
-        var serviceCollection = new ServiceCollection();
+            //setup our DI
+            var serviceCollection = new ServiceCollection();
 
-        ConfigureServices(serviceCollection);
+            ConfigureServices(serviceCollection);
 
-        ServiceProvider = serviceCollection.BuildServiceProvider();   
-    }
+            ServiceProvider = serviceCollection.BuildServiceProvider();
 
-    private static void ConfigureServices(IServiceCollection services)
-    {
-        IConfiguration config = new ConfigurationBuilder()
-            .AddEnvironmentVariables()
-            .Build();
+            DIHelper.OnServicesSetup(ServiceProvider);
+        }
 
-        DIHelper.Setup(services, config);
-
-        // Setup the app services
-        services.AddTransient<IEventHandlerCallback, ElectricityEventHandler>();
-    }
-
-    static void Main(string[] args)
-    {
-        CompositeResolver.RegisterAndSetAsDefault(new[]
+        private static void ConfigureServices(IServiceCollection services)
         {
+            IConfiguration config = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .Build();
+
+            DIHelper.Setup(services, config);
+
+            // Setup the app services
+            services.AddTransient<IEventHandlerCallback, ElectricityEventHandler>();
+        }
+
+        static void Main(string[] args)
+        {
+            CompositeResolver.RegisterAndSetAsDefault(new[]
+            {
                 EnumResolver.UnderlyingValue,
                 StandardResolver.ExcludeNullCamelCase
             });
 
-        //bind eventhandlers
-        IEventHandler eventHandler = ServiceProvider.GetService<IEventHandler>();
-        IEventHandlerCallback eventHandlerCallback = ServiceProvider.GetService<IEventHandlerCallback>();
+            //bind eventhandlers
+            IEventHandler eventHandler = ServiceProvider.GetService<IEventHandler>();
+            IEventHandlerCallback eventHandlerCallback = ServiceProvider.GetService<IEventHandlerCallback>();
 
-        try
-        {         
-            eventHandler.Start(eventHandlerCallback);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error occured during eventhandler startup check logs for info"+ ex.Message);
-            Environment.Exit(1);
-        }
+            try
+            {
+                eventHandler.Start(eventHandlerCallback);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error occured during eventhandler startup check logs for info" + ex.Message);
+                Environment.Exit(1);
+            }
 
-        Console.WriteLine("Up and running and ready to rumble!");
-        while (true)
-        {
-            Thread.Sleep(10000);
+            Console.WriteLine("Up and running and ready to rumble!");
+            while (true)
+            {
+                Thread.Sleep(10000);
+            }
         }
     }
-}
 }

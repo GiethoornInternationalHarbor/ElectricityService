@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace ElectricityService.Core.Models
 {
-    public class Ship
+    public class ServiceRequest
     {
-        /// <summary>
-        /// Gets or sets the guid
-        /// </summary>
         [Required]
-        [Key]
-        public Guid Id { get; set; }
+        public Guid ServiceId { get; set; }
+        [Required]
+        public Guid ShipId { get; set; }
+
+
     }
 }
