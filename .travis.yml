@@ -9,7 +9,7 @@ install: []
 
 env:
   global:
-    - IMAGE_NAME=giethoorninternationalharbor/electservice
+    - IMAGE_NAME=giethoorninternationalharbor/electricityservice
     - COMMIT=${TRAVIS_COMMIT::8}
 
 before_script:
